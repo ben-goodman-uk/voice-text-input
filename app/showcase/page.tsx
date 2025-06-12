@@ -1,29 +1,38 @@
-"use client"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { VoiceTextInput } from "@/components/voice-text-input"
-import { ConversationStatesShowcase } from "@/components/conversation-states-showcase"
-import { InputModesShowcase } from "@/components/input-modes-showcase"
-import { MessageTypesShowcase } from "@/components/message-types-showcase"
-import { MessageCombinationsShowcase } from "@/components/message-combinations-showcase"
+"use client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { VoiceTextInput } from "@/components/voice-text-input";
+import { ConversationStatesShowcase } from "@/components/conversation-states-showcase";
+import { InputModesShowcase } from "@/components/input-modes-showcase";
+import { MessageTypesShowcase } from "@/components/message-types-showcase";
+import { MessageCombinationsShowcase } from "@/components/message-combinations-showcase";
 
 export default function ShowcasePage() {
   const handleSubmit = (message: string, inputType: "voice" | "text") => {
-    console.log("Message submitted:", message, "via", inputType)
-  }
+    console.log("Message submitted:", message, "via", inputType);
+  };
 
   const handleConversationMessage = (message: string, isUser: boolean) => {
-    console.log(`${isUser ? "User" : "AI"} said:`, message)
-  }
+    console.log(`${isUser ? "User" : "AI"} said:`, message);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 pb-24">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center space-y-4 pt-8 mb-8">
-          <h1 className="text-4xl font-bold text-slate-900">Voice & Text Input Component Showcase</h1>
+          <h1 className="text-4xl font-bold text-slate-900">
+            Voice & Text Input Component Showcase
+          </h1>
           <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-            A comprehensive showcase of all visual and functional variants of the chat component, including different
-            states, message types, and combinations.
+            A comprehensive showcase of all visual and functional variants of
+            the chat component, including different states, message types, and
+            combinations.
           </p>
         </div>
 
@@ -57,7 +66,8 @@ export default function ShowcasePage() {
               <CardHeader>
                 <CardTitle>Interactive Demo</CardTitle>
                 <CardDescription>
-                  Try out the different features and modes of the voice and text input component
+                  Try out the different features and modes of the voice and text
+                  input component
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -75,5 +85,5 @@ export default function ShowcasePage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

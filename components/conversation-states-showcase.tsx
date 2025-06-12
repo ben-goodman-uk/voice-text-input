@@ -1,20 +1,25 @@
-"use client"
+"use client";
 
-import { VoiceTextInput } from "@/components/voice-text-input"
-import { ShowcaseCard } from "@/components/showcase-card"
+import { VoiceTextInput } from "@/components/voice-text-input";
+import { ShowcaseCard } from "@/components/showcase-card";
 
 export function ConversationStatesShowcase() {
   // No-op handlers
-  const handleSubmit = () => {}
-  const handleConversationMessage = () => {}
+  const handleSubmit = () => {};
+  const handleConversationMessage = () => {};
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold text-slate-900">Component States</h2>
+      <h2 className="text-2xl font-semibold text-slate-900">
+        Component States
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-col gap-4">
         {/* Basic Input States */}
-        <ShowcaseCard title="Idle State" description="Default state, ready for user input">
+        <ShowcaseCard
+          title="Idle State"
+          description="Default state, ready for user input"
+        >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
             onSubmit={handleSubmit}
@@ -25,7 +30,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Text Input Active" description="User is typing a message">
+        <ShowcaseCard
+          title="Text Input Active"
+          description="User is typing a message"
+        >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
             onSubmit={handleSubmit}
@@ -37,7 +45,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Voice Input Active" description="User is speaking (dictation mode)">
+        <ShowcaseCard
+          title="Voice Input Active"
+          description="User is speaking (dictation mode)"
+        >
           <VoiceTextInput
             placeholder="Speak now..."
             onSubmit={handleSubmit}
@@ -51,7 +62,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Processing State" description="Processing user input">
+        <ShowcaseCard
+          title="Processing State"
+          description="Processing user input"
+        >
           <VoiceTextInput
             placeholder="Processing..."
             onSubmit={handleSubmit}
@@ -64,7 +78,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Error State" description="Error occurred during input">
+        <ShowcaseCard
+          title="Error State"
+          description="Error occurred during input"
+        >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
             onSubmit={handleSubmit}
@@ -77,7 +94,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Success State" description="Input successfully processed">
+        <ShowcaseCard
+          title="Success State"
+          description="Input successfully processed"
+        >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
             onSubmit={handleSubmit}
@@ -91,10 +111,15 @@ export function ConversationStatesShowcase() {
         </ShowcaseCard>
       </div>
 
-      <h2 className="text-2xl font-semibold text-slate-900 mt-8">Natural Conversation Mode States</h2>
+      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
+        Natural Conversation Mode States
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ShowcaseCard title="Natural Mode - Inactive" description="Natural conversation mode available but not active">
+      <div className="flex flex-col gap-4">
+        <ShowcaseCard
+          title="Natural Mode - Inactive"
+          description="Natural conversation mode available but not active"
+        >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
             onSubmit={handleSubmit}
@@ -142,7 +167,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Natural Mode - Processing" description="Processing natural conversation input">
+        <ShowcaseCard
+          title="Natural Mode - Processing"
+          description="Processing natural conversation input"
+        >
           <VoiceTextInput
             placeholder=""
             onSubmit={handleSubmit}
@@ -163,7 +191,9 @@ export function ConversationStatesShowcase() {
           <div className="space-y-4">
             {/* Mock conversation history */}
             <div className="border rounded-lg bg-white/50 backdrop-blur-sm p-3 space-y-2">
-              <div className="text-xs font-medium text-slate-600 mb-2">Conversation History</div>
+              <div className="text-xs font-medium text-slate-600 mb-2">
+                Conversation History
+              </div>
               <div className="flex justify-end">
                 <div className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm max-w-[80%]">
                   Hello! How can you help me today?
@@ -189,7 +219,10 @@ export function ConversationStatesShowcase() {
           </div>
         </ShowcaseCard>
 
-        <ShowcaseCard title="Natural Mode - Error State" description="Error in natural conversation mode">
+        <ShowcaseCard
+          title="Natural Mode - Error State"
+          description="Error in natural conversation mode"
+        >
           <VoiceTextInput
             placeholder=""
             onSubmit={handleSubmit}
@@ -205,10 +238,15 @@ export function ConversationStatesShowcase() {
         </ShowcaseCard>
       </div>
 
-      <h2 className="text-2xl font-semibold text-slate-900 mt-8">Waveform Visualization States</h2>
+      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
+        Waveform Visualization States
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ShowcaseCard title="Compact Waveform (Voice Mode)" description="Compact waveform for dictation mode">
+      <div className="flex flex-col gap-4">
+        <ShowcaseCard
+          title="Compact Waveform (Voice Mode)"
+          description="Compact waveform for dictation mode"
+        >
           <VoiceTextInput
             placeholder="Speak now..."
             onSubmit={handleSubmit}
@@ -240,10 +278,15 @@ export function ConversationStatesShowcase() {
         </ShowcaseCard>
       </div>
 
-      <h2 className="text-2xl font-semibold text-slate-900 mt-8">Status Bar Variations</h2>
+      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
+        Status Bar Variations
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ShowcaseCard title="Compact Status (Manual Mode)" description="Compact status bar for manual input modes">
+      <div className="flex flex-col gap-4">
+        <ShowcaseCard
+          title="Compact Status (Manual Mode)"
+          description="Compact status bar for manual input modes"
+        >
           <VoiceTextInput
             placeholder="Type a message or speak..."
             onSubmit={handleSubmit}
@@ -257,7 +300,10 @@ export function ConversationStatesShowcase() {
           />
         </ShowcaseCard>
 
-        <ShowcaseCard title="Enhanced Status (Natural Mode)" description="Enhanced status bar for natural conversation">
+        <ShowcaseCard
+          title="Enhanced Status (Natural Mode)"
+          description="Enhanced status bar for natural conversation"
+        >
           <VoiceTextInput
             placeholder=""
             onSubmit={handleSubmit}
@@ -272,5 +318,5 @@ export function ConversationStatesShowcase() {
         </ShowcaseCard>
       </div>
     </div>
-  )
+  );
 }
