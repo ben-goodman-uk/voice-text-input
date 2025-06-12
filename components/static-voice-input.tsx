@@ -1,32 +1,43 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { Mic, Send, Keyboard, AlertCircle, Loader2, Volume2, Square, MessageCircle, Eye, EyeOff } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { StaticWaveform } from "@/components/static-waveform"
+"use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Mic,
+  Send,
+  Keyboard,
+  AlertCircle,
+  Loader2,
+  Volume2,
+  Square,
+  MessageCircle,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { StaticWaveform } from "@/components/static-waveform";
 
 interface StaticVoiceInputProps {
-  placeholder?: string
-  variant?: "chat" | "search" | "form"
-  showSendButton?: boolean
-  multiline?: boolean
-  enableNaturalConversation?: boolean
-  message?: string
-  state?: "idle" | "listening" | "processing" | "error" | "success"
-  error?: string
-  inputMode?: "text" | "voice" | "conversation"
-  isNaturalConversationEnabled?: boolean
-  showTranscriptInNaturalMode?: boolean
-  showWaveform?: boolean
-  waveformPattern?: "active" | "moderate" | "low" | "idle"
-  className?: string
+  placeholder?: string;
+  variant?: "chat" | "search" | "form";
+  showSendButton?: boolean;
+  multiline?: boolean;
+  enableNaturalConversation?: boolean;
+  message?: string;
+  state?: "idle" | "listening" | "processing" | "error" | "success";
+  error?: string;
+  inputMode?: "text" | "voice" | "conversation";
+  isNaturalConversationEnabled?: boolean;
+  showTranscriptInNaturalMode?: boolean;
+  showWaveform?: boolean;
+  waveformPattern?: "active" | "moderate" | "low" | "idle";
+  className?: string;
   conversationHistory?: Array<{
-    message: string
-    isUser: boolean
-    timestamp: string
-  }>
+    message: string;
+    isUser: boolean;
+    timestamp: string;
+  }>;
 }
 
 export function StaticVoiceInput({
@@ -50,96 +61,97 @@ export function StaticVoiceInput({
     if (inputMode === "conversation") {
       switch (state) {
         case "listening":
-          return "text-blue-600"
+          return "text-blue-600";
         case "processing":
-          return "text-amber-600"
+          return "text-amber-600";
         case "error":
-          return "text-red-600"
+          return "text-red-600";
         default:
-          return "text-slate-600"
+          return "text-slate-600";
       }
     }
 
     switch (state) {
       case "listening":
-        return "text-blue-600"
+        return "text-blue-600";
       case "processing":
-        return "text-amber-600"
+        return "text-amber-600";
       case "error":
-        return "text-red-600"
+        return "text-red-600";
       case "success":
-        return "text-emerald-600"
+        return "text-emerald-600";
       default:
-        return "text-slate-600"
+        return "text-slate-600";
     }
-  }
+  };
 
   const getStateBorder = () => {
     if (inputMode === "conversation") {
       switch (state) {
         case "listening":
-          return "border-blue-300 ring-2 ring-blue-100 shadow-lg shadow-blue-100/50"
+          return "border-blue-300 ring-2 ring-blue-100 shadow-lg shadow-blue-100/50";
         case "processing":
-          return "border-amber-300 ring-2 ring-amber-100 shadow-lg shadow-amber-100/50"
+          return "border-amber-300 ring-2 ring-amber-100 shadow-lg shadow-amber-100/50";
         case "error":
-          return "border-red-300 ring-2 ring-red-100 shadow-lg shadow-red-100/50"
+          return "border-red-300 ring-2 ring-red-100 shadow-lg shadow-red-100/50";
         default:
-          return "border-slate-200"
+          return "border-slate-200";
       }
     }
 
     switch (state) {
       case "listening":
-        return "border-blue-300 ring-2 ring-blue-100 shadow-lg shadow-blue-100/50"
+        return "border-blue-300 ring-2 ring-blue-100 shadow-lg shadow-blue-100/50";
       case "processing":
-        return "border-amber-300 ring-2 ring-amber-100 shadow-lg shadow-amber-100/50"
+        return "border-amber-300 ring-2 ring-amber-100 shadow-lg shadow-amber-100/50";
       case "error":
-        return "border-red-300 ring-2 ring-red-100 shadow-lg shadow-red-100/50"
+        return "border-red-300 ring-2 ring-red-100 shadow-lg shadow-red-100/50";
       case "success":
-        return "border-emerald-300 ring-2 ring-emerald-100 shadow-lg shadow-emerald-100/50"
+        return "border-emerald-300 ring-2 ring-emerald-100 shadow-lg shadow-emerald-100/50";
       default:
-        return "border-slate-200"
+        return "border-slate-200";
     }
-  }
+  };
 
   const getStateBackground = () => {
     if (inputMode === "conversation") {
       switch (state) {
         case "listening":
-          return "bg-gradient-to-r from-blue-50/80 to-indigo-50/80"
+          return "bg-gradient-to-r from-blue-50/80 to-indigo-50/80";
         case "processing":
-          return "bg-gradient-to-r from-amber-50/80 to-orange-50/80"
+          return "bg-gradient-to-r from-amber-50/80 to-orange-50/80";
         case "error":
-          return "bg-gradient-to-r from-red-50/80 to-red-50/80"
+          return "bg-gradient-to-r from-red-50/80 to-red-50/80";
         default:
-          return ""
+          return "";
       }
     }
 
     if (inputMode === "voice" && state === "listening") {
-      return "bg-gradient-to-r from-blue-50/70 to-indigo-50/70"
+      return "bg-gradient-to-r from-blue-50/70 to-indigo-50/70";
     }
 
-    return ""
-  }
+    return "";
+  };
 
-  const InputComponent = multiline ? Textarea : Input
+  const InputComponent = multiline ? Textarea : Input;
 
   const getNaturalModeStatusText = () => {
     switch (state) {
       case "listening":
-        return "Listening... Speak naturally"
+        return "Listening... Speak naturally";
       case "processing":
-        return "Processing your message..."
+        return "Processing your message...";
       case "error":
-        return "Conversation paused"
+        return "Conversation paused";
       default:
-        return "Natural conversation mode"
+        return "Natural conversation mode";
     }
-  }
+  };
 
-  const shouldShowWaveform = showWaveform && (inputMode === "voice" || inputMode === "conversation")
-  const isFullWidthWaveform = inputMode === "conversation"
+  const shouldShowWaveform =
+    showWaveform && (inputMode === "voice" || inputMode === "conversation");
+  const isFullWidthWaveform = inputMode === "conversation";
 
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
@@ -159,24 +171,37 @@ export function StaticVoiceInput({
             </div>
             <div className="p-3 space-y-3 max-h-48 overflow-y-auto">
               {conversationHistory.map((msg, index) => (
-                <div key={index} className={cn("flex gap-3", msg.isUser ? "justify-end" : "justify-start")}>
+                <div
+                  key={index}
+                  className={cn(
+                    "flex gap-3",
+                    msg.isUser ? "justify-end" : "justify-start"
+                  )}
+                >
                   {!msg.isUser && (
                     <div className="shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                       <span className="text-xs font-bold text-white">A</span>
                     </div>
                   )}
-                  <div className={cn("flex flex-col gap-1", msg.isUser ? "items-end" : "items-start")}>
+                  <div
+                    className={cn(
+                      "flex flex-col gap-1",
+                      msg.isUser ? "items-end" : "items-start"
+                    )}
+                  >
                     <div
                       className={cn(
                         "max-w-[80%] px-3 py-2 rounded-lg text-sm",
                         msg.isUser
                           ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm"
-                          : "bg-gradient-to-br from-slate-100 to-slate-200 text-slate-900 rounded-bl-sm border",
+                          : "bg-gradient-to-br from-slate-100 to-slate-200 text-slate-900 rounded-bl-sm border"
                       )}
                     >
                       {msg.message}
                     </div>
-                    <span className="text-xs text-slate-400">{msg.timestamp}</span>
+                    <span className="text-xs text-slate-400">
+                      {msg.timestamp}
+                    </span>
                   </div>
                   {msg.isUser && (
                     <div className="shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
@@ -195,7 +220,7 @@ export function StaticVoiceInput({
             "relative flex flex-col rounded-lg border transition-all duration-300",
             getStateBorder(),
             variant === "search" && "rounded-full",
-            variant === "form" && "min-h-[120px]",
+            variant === "form" && "min-h-[120px]"
           )}
         >
           {/* Status Bar for Natural Mode */}
@@ -204,7 +229,7 @@ export function StaticVoiceInput({
               className={cn(
                 "flex items-center justify-between px-3 py-1.5 border-b",
                 getStateBackground(),
-                state === "listening" && "animate-pulse",
+                state === "listening" && "animate-pulse"
               )}
             >
               <div className="flex items-center gap-2">
@@ -213,10 +238,12 @@ export function StaticVoiceInput({
                     "w-2 h-2 rounded-full",
                     state === "listening" && "bg-blue-500 animate-pulse",
                     state === "processing" && "bg-amber-500",
-                    state === "error" && "bg-red-500",
+                    state === "error" && "bg-red-500"
                   )}
                 />
-                <span className="text-xs font-medium">{getNaturalModeStatusText()}</span>
+                <span className="text-xs font-medium">
+                  {getNaturalModeStatusText()}
+                </span>
               </div>
 
               <Button
@@ -225,7 +252,11 @@ export function StaticVoiceInput({
                 size="sm"
                 className="h-6 w-6 p-0 text-slate-500 hover:text-indigo-600"
               >
-                {showTranscriptInNaturalMode ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                {showTranscriptInNaturalMode ? (
+                  <Eye className="h-3 w-3" />
+                ) : (
+                  <EyeOff className="h-3 w-3" />
+                )}
               </Button>
             </div>
           )}
@@ -235,7 +266,12 @@ export function StaticVoiceInput({
             {/* Full-width Waveform Background */}
             {shouldShowWaveform && isFullWidthWaveform && (
               <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
-                <div className={cn("absolute inset-0 transition-all duration-500", getStateBackground())} />
+                <div
+                  className={cn(
+                    "absolute inset-0 transition-all duration-500",
+                    getStateBackground()
+                  )}
+                />
                 <div className="absolute inset-0 flex items-center px-4">
                   <StaticWaveform
                     pattern={waveformPattern}
@@ -266,15 +302,19 @@ export function StaticVoiceInput({
 
             {/* Text Input */}
             <InputComponent
-              value={isNaturalConversationEnabled && !showTranscriptInNaturalMode ? "" : message}
+              value={
+                isNaturalConversationEnabled && !showTranscriptInNaturalMode
+                  ? ""
+                  : message
+              }
               placeholder={
                 isNaturalConversationEnabled && !showTranscriptInNaturalMode
                   ? ""
                   : isNaturalConversationEnabled && showTranscriptInNaturalMode
-                    ? "Live transcript..."
-                    : inputMode === "voice" && message
-                      ? "Processing speech..."
-                      : placeholder
+                  ? "Live transcript..."
+                  : inputMode === "voice" && message
+                  ? "Processing speech..."
+                  : placeholder
               }
               className={cn(
                 "flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 resize-none",
@@ -282,11 +322,18 @@ export function StaticVoiceInput({
                 (inputMode === "voice" || inputMode === "conversation") &&
                   state === "listening" &&
                   "text-blue-900 font-medium",
-                isNaturalConversationEnabled && !showTranscriptInNaturalMode && "cursor-not-allowed",
-                isFullWidthWaveform && state === "listening" && "relative z-10",
+                isNaturalConversationEnabled &&
+                  !showTranscriptInNaturalMode &&
+                  "cursor-not-allowed",
+                isFullWidthWaveform && state === "listening" && "relative z-10"
               )}
-              disabled={(inputMode === "voice" || inputMode === "conversation") && state === "listening"}
-              readOnly={isNaturalConversationEnabled && !showTranscriptInNaturalMode}
+              disabled={
+                (inputMode === "voice" || inputMode === "conversation") &&
+                state === "listening"
+              }
+              readOnly={
+                isNaturalConversationEnabled && !showTranscriptInNaturalMode
+              }
             />
 
             {/* Controls */}
@@ -301,10 +348,15 @@ export function StaticVoiceInput({
                     "shrink-0 h-8 w-8 p-0 transition-all duration-200",
                     isNaturalConversationEnabled
                       ? "bg-indigo-100 text-indigo-700 shadow-sm"
-                      : "text-slate-600 hover:text-indigo-600",
+                      : "text-slate-600 hover:text-indigo-600"
                   )}
                 >
-                  <MessageCircle className={cn("h-4 w-4", isNaturalConversationEnabled && "animate-pulse")} />
+                  <MessageCircle
+                    className={cn(
+                      "h-4 w-4",
+                      isNaturalConversationEnabled && "animate-pulse"
+                    )}
+                  />
                 </Button>
               )}
 
@@ -321,30 +373,45 @@ export function StaticVoiceInput({
                       <Square className="h-4 w-4 fill-current" />
                     </Button>
                   ) : (
-                    <Button type="button" variant="ghost" size="sm" className="shrink-0 h-8 w-8 p-0 text-slate-600">
-                      {inputMode === "text" ? <Mic className="h-4 w-4" /> : <Keyboard className="h-4 w-4" />}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="shrink-0 h-8 w-8 p-0 text-slate-600"
+                    >
+                      {inputMode === "text" ? (
+                        <Mic className="h-4 w-4" />
+                      ) : (
+                        <Keyboard className="h-4 w-4" />
+                      )}
                     </Button>
                   )}
                 </>
               )}
 
               {/* Send Button */}
-              {showSendButton && (!isNaturalConversationEnabled || showTranscriptInNaturalMode) && (
-                <Button
-                  type="button"
-                  size="sm"
-                  className={cn(
-                    "shrink-0 h-8 w-8 p-0",
-                    message.trim()
-                      ? isNaturalConversationEnabled
-                        ? "bg-indigo-600 text-white"
-                        : "bg-blue-600 text-white"
-                      : "bg-slate-100 text-slate-400",
-                  )}
-                >
-                  {state === "processing" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </Button>
-              )}
+              {showSendButton &&
+                (!isNaturalConversationEnabled ||
+                  showTranscriptInNaturalMode) && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    className={cn(
+                      "shrink-0 h-8 w-8 p-0",
+                      message.trim()
+                        ? isNaturalConversationEnabled
+                          ? "bg-indigo-600 text-white"
+                          : "bg-blue-600 text-white"
+                        : "bg-slate-100 text-slate-400"
+                    )}
+                  >
+                    {state === "processing" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
             </div>
           </div>
 
@@ -356,7 +423,7 @@ export function StaticVoiceInput({
                 state === "listening" && "bg-blue-50/50",
                 state === "processing" && "bg-amber-50/50",
                 state === "error" && "bg-red-50/50",
-                state === "success" && "bg-emerald-50/50",
+                state === "success" && "bg-emerald-50/50"
               )}
             >
               <div className="flex items-center gap-2">
@@ -396,8 +463,6 @@ export function StaticVoiceInput({
               </div>
 
               <div className="text-slate-400 flex items-center gap-2">
-                <span>{inputMode === "voice" ? "🎤 Voice" : "⌨️ Text"} mode</span>
-                <span>•</span>
                 <span>{message.length} chars</span>
               </div>
             </div>
@@ -405,5 +470,5 @@ export function StaticVoiceInput({
         </div>
       </div>
     </TooltipProvider>
-  )
+  );
 }

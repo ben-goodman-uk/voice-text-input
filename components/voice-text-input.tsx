@@ -21,8 +21,6 @@ import {
   Square,
   MicOff,
   MessageCircle,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WaveformVisualizer } from "@/components/waveform-visualizer";
@@ -140,8 +138,7 @@ export function VoiceTextInput({
   );
   const [isNaturalConversationEnabled, setIsNaturalConversationEnabled] =
     useState(defaultIsNaturalConversationEnabled);
-  const [showTranscriptInNaturalMode, setShowTranscriptInNaturalMode] =
-    useState(false);
+
   const [error, setError] = useState<string | null>(defaultError);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const [conversationHistory, setConversationHistory] = useState<
@@ -629,21 +626,12 @@ export function VoiceTextInput({
 
   // Update message when transcript changes (prevent duplication)
   useEffect(() => {
-    if (
-      transcript &&
-      (inputMode === "voice" ||
-        (inputMode === "conversation" && showTranscriptInNaturalMode))
-    ) {
+    if (transcript && inputMode === "voice") {
       if (transcript !== lastProcessedTranscript) {
         setMessage(transcript);
       }
     }
-  }, [
-    transcript,
-    inputMode,
-    lastProcessedTranscript,
-    showTranscriptInNaturalMode,
-  ]);
+  }, [transcript, inputMode, lastProcessedTranscript]);
 
   // Handle speech recognition errors
   useEffect(() => {
@@ -883,7 +871,7 @@ export function VoiceTextInput({
           {isNaturalConversationEnabled && (
             <div
               className={cn(
-                "flex items-center justify-between px-3 py-1.5 border-b",
+                "flex items-center justify-between px-3 py-2 sm:py-1.5 border-b",
                 getStateBackground(),
                 conversationState === "listening" && "animate-pulse"
               )}
@@ -904,56 +892,18 @@ export function VoiceTextInput({
                   )}
                   aria-hidden="true"
                 />
-                <span className="text-xs font-medium" id="conversation-status">
+                <span
+                  className="text-sm sm:text-xs font-medium"
+                  id="conversation-status"
+                >
                   {getNaturalModeStatusText()}
                 </span>
               </div>
-
-              {/* Transcript Toggle */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      setShowTranscriptInNaturalMode(
-                        !showTranscriptInNaturalMode
-                      )
-                    }
-                    className="h-6 w-6 p-0 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
-                    aria-label={`${
-                      showTranscriptInNaturalMode ? "Hide" : "Show"
-                    } live transcript in natural conversation mode`}
-                    aria-pressed={showTranscriptInNaturalMode}
-                  >
-                    {showTranscriptInNaturalMode ? (
-                      <Eye className="h-3 w-3" />
-                    ) : (
-                      <EyeOff className="h-3 w-3" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="z-[9999] bg-gray-900 text-white shadow-xl">
-                  <div className="text-center">
-                    <p className="font-medium">
-                      {showTranscriptInNaturalMode
-                        ? "Hide Live Transcript"
-                        : "Show Live Transcript"}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {showTranscriptInNaturalMode
-                        ? "Hide the real-time transcription of your speech for a cleaner interface"
-                        : "Display what you're saying in real-time as you speak in natural conversation mode"}
-                    </p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
             </div>
           )}
 
           {/* Input Area */}
-          <div className="relative flex items-center gap-2 p-3">
+          <div className="relative flex items-center gap-2 p-3 sm:gap-2 sm:p-3">
             {/* Full-width Waveform Background for Natural Mode */}
             {shouldShowWaveform && isFullWidthWaveform && (
               <div
@@ -1010,43 +960,33 @@ export function VoiceTextInput({
             {/* Text Input */}
             <InputComponent
               ref={inputRef as any}
-              value={
-                isNaturalConversationEnabled && !showTranscriptInNaturalMode
-                  ? ""
-                  : message
-              }
+              value={isNaturalConversationEnabled ? "" : message}
               onChange={(e) => {
                 setMessage(e.target.value);
                 if (inputMode === "voice") setInputMode("text");
               }}
               onKeyDown={handleKeyPress}
               placeholder={
-                isNaturalConversationEnabled && !showTranscriptInNaturalMode
+                isNaturalConversationEnabled
                   ? "" // No placeholder in natural mode
-                  : isNaturalConversationEnabled && showTranscriptInNaturalMode
-                  ? "Live transcript..."
                   : inputMode === "voice" && transcript
                   ? "Processing speech..."
                   : placeholder
               }
               className={cn(
-                "flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 resize-none",
+                "flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 resize-none text-base sm:text-sm",
                 multiline && "min-h-[80px]",
                 (inputMode === "voice" || inputMode === "conversation") &&
                   isListening &&
                   "text-blue-900 font-medium",
-                isNaturalConversationEnabled &&
-                  !showTranscriptInNaturalMode &&
-                  "cursor-not-allowed",
+                isNaturalConversationEnabled && "cursor-not-allowed",
                 isFullWidthWaveform && isListening && "relative z-10"
               )}
               disabled={
                 (inputMode === "voice" || inputMode === "conversation") &&
                 isListening
               }
-              readOnly={
-                isNaturalConversationEnabled && !showTranscriptInNaturalMode
-              }
+              readOnly={isNaturalConversationEnabled}
               aria-label="Message input field"
               aria-describedby="input-help input-status"
               aria-invalid={error ? "true" : "false"}
@@ -1056,7 +996,7 @@ export function VoiceTextInput({
 
             {/* Controls */}
             <div
-              className="relative z-50 flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-md p-1 shadow-sm border border-slate-200/50"
+              className="relative z-50 flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-md p-1 shadow-sm border border-slate-200/50 shrink-0"
               role="toolbar"
               aria-label="Input controls"
             >
@@ -1070,7 +1010,7 @@ export function VoiceTextInput({
                       size="sm"
                       onClick={handleNaturalConversationToggle}
                       className={cn(
-                        "shrink-0 h-8 w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1",
+                        "shrink-0 h-9 w-9 sm:h-8 sm:w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 touch-manipulation",
                         isNaturalConversationEnabled
                           ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200 shadow-sm"
                           : "text-slate-600 hover:text-indigo-600 hover:bg-indigo-50",
@@ -1122,7 +1062,7 @@ export function VoiceTextInput({
                           size="sm"
                           onClick={handleStopListening}
                           className={cn(
-                            "shrink-0 h-8 w-8 p-0 animate-pulse focus:ring-2 focus:ring-red-500 focus:ring-offset-1",
+                            "shrink-0 h-9 w-9 sm:h-8 sm:w-8 p-0 animate-pulse focus:ring-2 focus:ring-red-500 focus:ring-offset-1 touch-manipulation",
                             "bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700"
                           )}
                           aria-label="Stop voice input and process speech"
@@ -1156,7 +1096,7 @@ export function VoiceTextInput({
                               : switchToTextMode
                           }
                           className={cn(
-                            "shrink-0 h-8 w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                            "shrink-0 h-9 w-9 sm:h-8 sm:w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 touch-manipulation",
                             inputMode === "voice"
                               ? "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                               : "text-slate-600 hover:text-blue-600 hover:bg-blue-50",
@@ -1198,63 +1138,61 @@ export function VoiceTextInput({
               )}
 
               {/* Send Button */}
-              {showSendButton &&
-                (!isNaturalConversationEnabled ||
-                  showTranscriptInNaturalMode) && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        onClick={handleSubmit}
-                        disabled={
-                          isClient
-                            ? !message.trim() ||
-                              inputState === "processing" ||
-                              conversationState === "processing"
-                            : undefined
-                        }
-                        size="sm"
-                        className={cn(
-                          "shrink-0 h-8 w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
-                          message.trim()
-                            ? isNaturalConversationEnabled
-                              ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                              : "bg-blue-600 hover:bg-blue-700 text-white"
-                            : "bg-slate-100 text-slate-400"
-                        )}
-                        aria-label="Send message"
-                      >
-                        {isClient &&
-                        (inputState === "processing" ||
-                          conversationState === "processing") ? (
-                          <Loader2
-                            className="h-4 w-4 animate-spin"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <Send className="h-4 w-4" aria-hidden="true" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="z-[9999] bg-gray-900 text-white shadow-xl">
-                      <div className="text-center">
-                        <p className="font-medium">Send Message</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {message.trim()
-                            ? "Send your message to start or continue the conversation"
-                            : "Type or speak a message first before sending"}
-                        </p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
+              {showSendButton && !isNaturalConversationEnabled && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={
+                        isClient
+                          ? !message.trim() ||
+                            inputState === "processing" ||
+                            conversationState === "processing"
+                          : undefined
+                      }
+                      size="sm"
+                      className={cn(
+                        "shrink-0 h-9 w-9 sm:h-8 sm:w-8 p-0 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 touch-manipulation",
+                        message.trim()
+                          ? isNaturalConversationEnabled
+                            ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                            : "bg-blue-600 hover:bg-blue-700 text-white"
+                          : "bg-slate-100 text-slate-400"
+                      )}
+                      aria-label="Send message"
+                    >
+                      {isClient &&
+                      (inputState === "processing" ||
+                        conversationState === "processing") ? (
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <Send className="h-4 w-4" aria-hidden="true" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="z-[9999] bg-gray-900 text-white shadow-xl">
+                    <div className="text-center">
+                      <p className="font-medium">Send Message</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {message.trim()
+                          ? "Send your message to start or continue the conversation"
+                          : "Type or speak a message first before sending"}
+                      </p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
 
           {/* Compact Status Indicator - Only for non-natural mode */}
           {!isNaturalConversationEnabled && (
             <div
-              className="flex items-center justify-between text-xs px-3 py-1 border-t"
+              className="flex items-center justify-between text-sm sm:text-xs px-3 py-2 sm:py-1 border-t"
               role="status"
               aria-live="polite"
             >
@@ -1324,15 +1262,6 @@ export function VoiceTextInput({
               </div>
 
               <div className="text-slate-400 flex items-center gap-2">
-                <span className="hidden sm:inline">
-                  {isClient
-                    ? inputMode === "voice"
-                      ? "🎤 Voice"
-                      : "⌨️ Text"
-                    : "⌨️ Text"}{" "}
-                  mode
-                </span>
-                <span>•</span>
                 <button
                   onClick={toggleVoiceResponses}
                   className="text-slate-600 hover:text-indigo-600 hover:underline"

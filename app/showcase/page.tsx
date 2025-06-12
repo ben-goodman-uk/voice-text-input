@@ -10,8 +10,7 @@ import {
 import { VoiceTextInput } from "@/components/voice-text-input";
 import { ConversationStatesShowcase } from "@/components/conversation-states-showcase";
 import { InputModesShowcase } from "@/components/input-modes-showcase";
-import { MessageTypesShowcase } from "@/components/message-types-showcase";
-import { MessageCombinationsShowcase } from "@/components/message-combinations-showcase";
+import { MobileShowcase } from "@/components/mobile-showcase";
 
 export default function ShowcasePage() {
   const handleSubmit = (message: string, inputType: "voice" | "text") => {
@@ -31,17 +30,16 @@ export default function ShowcasePage() {
           </h1>
           <p className="text-lg text-slate-600 max-w-3xl mx-auto">
             A comprehensive showcase of all visual and functional variants of
-            the chat component, including different states, message types, and
-            combinations.
+            the chat component, including different states, input modes, and
+            mobile designs.
           </p>
         </div>
 
         <Tabs defaultValue="states" className="w-full">
-          <TabsList className="grid grid-cols-5 mb-8">
+          <TabsList className="grid grid-cols-4 mb-8">
             <TabsTrigger value="states">Component States</TabsTrigger>
             <TabsTrigger value="input-modes">Input Modes</TabsTrigger>
-            <TabsTrigger value="messages">Message Types</TabsTrigger>
-            <TabsTrigger value="combinations">Combinations</TabsTrigger>
+            <TabsTrigger value="mobile">Mobile</TabsTrigger>
             <TabsTrigger value="interactive">Interactive Demo</TabsTrigger>
           </TabsList>
 
@@ -53,12 +51,8 @@ export default function ShowcasePage() {
             <InputModesShowcase />
           </TabsContent>
 
-          <TabsContent value="messages">
-            <MessageTypesShowcase />
-          </TabsContent>
-
-          <TabsContent value="combinations">
-            <MessageCombinationsShowcase />
+          <TabsContent value="mobile">
+            <MobileShowcase />
           </TabsContent>
 
           <TabsContent value="interactive">
