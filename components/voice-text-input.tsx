@@ -89,6 +89,8 @@ export interface VoiceTextInputProps {
   defaultError?: string | null;
   defaultInputMode?: "text" | "voice" | "conversation";
   defaultIsNaturalConversationEnabled?: boolean;
+  /** When true, AI responses will be spoken aloud using the browser's speech synthesis */
+  defaultVoiceResponsesEnabled?: boolean;
   className?: string;
 }
 
@@ -125,6 +127,7 @@ export function VoiceTextInput({
   defaultError = null,
   defaultInputMode = "text",
   defaultIsNaturalConversationEnabled = false,
+  defaultVoiceResponsesEnabled = false,
   className,
 }: VoiceTextInputProps) {
   const [message, setMessage] = useState(defaultMessage);
@@ -148,6 +151,9 @@ export function VoiceTextInput({
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null);
   const [conversationContext, setConversationContext] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [isVoiceResponsesEnabled, setIsVoiceResponsesEnabled] = useState(
+    defaultVoiceResponsesEnabled
+  );
 
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const conversationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -306,6 +312,80 @@ export function VoiceTextInput({
     []
   );
 
+  // Function to speak AI responses
+  const speakResponse = useCallback(
+    (text: string) => {
+      if (!isVoiceResponsesEnabled || !isClient) return;
+
+      try {
+        // Cancel any ongoing speech
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        // Use a more natural voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(
+          (voice) =>
+            voice.name.includes("Google") ||
+            voice.name.includes("Natural") ||
+            voice.name.includes("Female") ||
+            voice.name.includes("Samantha")
+        );
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.error("Error using speech synthesis:", err);
+      }
+    },
+    [isVoiceResponsesEnabled, isClient]
+  );
+
+  // Toggle voice responses
+  const toggleVoiceResponses = useCallback(() => {
+    setIsVoiceResponsesEnabled((prev) => !prev);
+  }, []);
+
+  // Modified onConversationMessage handler to include speech
+  const handleConversationMessage = useCallback(
+    (message: string, isUser: boolean) => {
+      if (onConversationMessage) {
+        onConversationMessage(message, isUser);
+      }
+
+      // Add to conversation history
+      setConversationHistory((prev) => [
+        ...prev,
+        { message, isUser, timestamp: new Date() },
+      ]);
+
+      // Speak AI responses
+      if (!isUser) {
+        speakResponse(message);
+      }
+    },
+    [onConversationMessage, speakResponse]
+  );
+
+  // Update to handle speaking AI responses when received
+  useEffect(() => {
+    if (conversationHistory.length > 0) {
+      const lastMessage = conversationHistory[conversationHistory.length - 1];
+      if (!lastMessage.isUser) {
+        speakResponse(lastMessage.message);
+      }
+    }
+  }, [conversationHistory, speakResponse]);
+
   // Handle natural conversation toggle
   const handleNaturalConversationToggle = useCallback(async () => {
     const newState = !isNaturalConversationEnabled;
@@ -402,16 +482,8 @@ export function VoiceTextInput({
       setConversationState("processing");
       setLastProcessedTranscript(userMessage);
 
-      const newMessage: ConversationMessage = {
-        message: userMessage,
-        isUser: true,
-        timestamp: new Date(),
-      };
-      setConversationHistory((prev) => [...prev, newMessage]);
-
-      if (onConversationMessage) {
-        onConversationMessage(userMessage, true);
-      }
+      // Use our modified handler for the user message
+      handleConversationMessage(userMessage, true);
 
       // Add to conversation context
       setConversationContext((prev) => [...prev.slice(-4), userMessage]); // Keep last 5 messages for context
@@ -427,16 +499,9 @@ export function VoiceTextInput({
           userMessage,
           conversationContext
         );
-        const aiMessage: ConversationMessage = {
-          message: aiResponse,
-          isUser: false,
-          timestamp: new Date(),
-        };
-        setConversationHistory((prev) => [...prev, aiMessage]);
 
-        if (onConversationMessage) {
-          onConversationMessage(aiResponse, false);
-        }
+        // Use our handler for the AI response
+        handleConversationMessage(aiResponse, false);
 
         // Add AI response to context
         setConversationContext((prev) => [...prev.slice(-4), aiResponse]);
@@ -455,7 +520,7 @@ export function VoiceTextInput({
       }, Math.random() * 1000 + 1000); // Random delay between 1-2 seconds for more natural feel
     },
     [
-      onConversationMessage,
+      handleConversationMessage,
       resetTranscript,
       inputMode,
       isNaturalConversationEnabled,
@@ -470,16 +535,8 @@ export function VoiceTextInput({
   const handleSubmit = useCallback(() => {
     if (message.trim()) {
       if (inputMode === "conversation") {
-        // In conversation mode, add to history
-        const newMessage: ConversationMessage = {
-          message: message.trim(),
-          isUser: true,
-          timestamp: new Date(),
-        };
-        setConversationHistory((prev) => [...prev, newMessage]);
-        if (onConversationMessage) {
-          onConversationMessage(message.trim(), true);
-        }
+        // Use our handler for the user message
+        handleConversationMessage(message.trim(), true);
 
         // Generate AI response for manual conversation input
         setTimeout(() => {
@@ -487,27 +544,16 @@ export function VoiceTextInput({
             message.trim(),
             conversationContext
           );
-          const aiMessage: ConversationMessage = {
-            message: aiResponse,
-            isUser: false,
-            timestamp: new Date(),
-          };
-          setConversationHistory((prev) => [...prev, aiMessage]);
-          if (onConversationMessage) {
-            onConversationMessage(aiResponse, false);
-          }
+
+          // Use our handler for the AI response
+          handleConversationMessage(aiResponse, false);
         }, 1500);
       } else {
         // Normal submit - also generate a response for demo
         onSubmit(message.trim(), inputMode === "voice" ? "voice" : "text");
 
-        // Add to conversation history for demo
-        const userMessage: ConversationMessage = {
-          message: message.trim(),
-          isUser: true,
-          timestamp: new Date(),
-        };
-        setConversationHistory((prev) => [...prev, userMessage]);
+        // Use our handler for the user message
+        handleConversationMessage(message.trim(), true);
 
         // Generate AI response
         setTimeout(() => {
@@ -515,12 +561,9 @@ export function VoiceTextInput({
             message.trim(),
             conversationContext
           );
-          const aiMessage: ConversationMessage = {
-            message: aiResponse,
-            isUser: false,
-            timestamp: new Date(),
-          };
-          setConversationHistory((prev) => [...prev, aiMessage]);
+
+          // Use our handler for the AI response
+          handleConversationMessage(aiResponse, false);
         }, 1200);
       }
 
@@ -538,7 +581,7 @@ export function VoiceTextInput({
     message,
     inputMode,
     onSubmit,
-    onConversationMessage,
+    handleConversationMessage,
     resetTranscript,
     stopAudioStream,
     conversationContext,
@@ -1290,7 +1333,16 @@ export function VoiceTextInput({
                   mode
                 </span>
                 <span>•</span>
-                <span>{message.length} chars</span>
+                <button
+                  onClick={toggleVoiceResponses}
+                  className="text-slate-600 hover:text-indigo-600 hover:underline"
+                  aria-label={`${
+                    isVoiceResponsesEnabled ? "Turn off" : "Turn on"
+                  } voice responses`}
+                >
+                  {isVoiceResponsesEnabled ? "Turn off" : "Turn on"} voice
+                  responses
+                </button>
               </div>
             </div>
           )}
