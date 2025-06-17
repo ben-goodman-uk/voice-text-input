@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WaveformVisualizer } from "@/components/waveform-visualizer";
+import { StaticWaveform } from "@/components/static-waveform";
 import { ConversationHistory } from "@/components/conversation-history";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 
@@ -48,29 +49,27 @@ const getAccessibilityAnnouncement = (
   if (isNaturalConversationEnabled) {
     switch (conversationState) {
       case "listening":
-        return "Natural conversation mode active. Listening for your voice. Speak naturally.";
+        return "Conversation mode listening";
       case "processing":
-        return "Processing your message. Please wait.";
+        return "Processing your message";
       case "responding":
-        return "AI is responding. Please listen.";
+        return "AI responding";
       case "paused":
-        return "Natural conversation paused. Press Alt+C to resume or click the conversation button.";
+        return "Conversation paused";
       default:
-        return "Natural conversation mode ready. Press Alt+C to start or click the conversation button.";
+        return "Conversation mode ready";
     }
   }
 
   switch (inputState) {
     case "listening":
-      return "Voice input active. Speak now. Press Alt+V to stop or click the stop button.";
+      return "Voice input active. Speak now";
     case "processing":
-      return "Processing your voice input. Please wait.";
+      return "Processing voice input";
     case "success":
-      return "Voice input captured successfully.";
+      return "Voice captured";
     default:
-      return `${
-        inputMode === "voice" ? "Voice" : "Text"
-      } input mode. Press Alt+V to toggle voice input, Alt+C for conversation mode.`;
+      return `${inputMode === "voice" ? "Voice" : "Text"} input mode`;
   }
 };
 
@@ -89,6 +88,8 @@ export interface VoiceTextInputProps {
   defaultIsNaturalConversationEnabled?: boolean;
   /** When true, AI responses will be spoken aloud using the browser's speech synthesis */
   defaultVoiceResponsesEnabled?: boolean;
+  /** When true, shows static waveform for showcase/demo purposes without requiring microphone access */
+  showcaseMode?: boolean;
   className?: string;
 }
 
@@ -126,6 +127,7 @@ export function VoiceTextInput({
   defaultInputMode = "text",
   defaultIsNaturalConversationEnabled = false,
   defaultVoiceResponsesEnabled = false,
+  showcaseMode = false,
   className,
 }: VoiceTextInputProps) {
   const [message, setMessage] = useState(defaultMessage);
@@ -187,9 +189,7 @@ export function VoiceTextInput({
       return stream;
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      setError(
-        "Microphone access denied. Please allow microphone access and try again."
-      );
+      setError("Microphone access denied");
       setInputState("error");
       setIsNaturalConversationEnabled(false);
       return null;
@@ -391,7 +391,7 @@ export function VoiceTextInput({
     if (newState) {
       // Switch to conversation mode
       if (!isSupported) {
-        setError("Speech recognition is not supported in this browser");
+        setError("Voice not supported");
         setIsNaturalConversationEnabled(false);
         return;
       }
@@ -440,7 +440,7 @@ export function VoiceTextInput({
 
   const handleStartListening = useCallback(async () => {
     if (!isSupported) {
-      setError("Speech recognition is not supported in this browser");
+      setError("Voice not supported");
       setInputState("error");
       return;
     }
@@ -818,23 +818,27 @@ export function VoiceTextInput({
   const getNaturalModeStatusText = () => {
     switch (conversationState) {
       case "listening":
-        return "Listening... Speak naturally";
+        return "Listening...";
       case "processing":
-        return "Processing your message...";
+        return "Processing...";
       case "responding":
-        return "AI is responding...";
+        return "AI responding...";
       case "paused":
         return "Conversation paused";
       default:
-        return "Natural conversation mode";
+        return "Conversation mode";
     }
   };
 
   // Check if we should show waveform
-  const shouldShowWaveform =
-    ((inputMode === "voice" && isListening) ||
-      (inputMode === "conversation" && isListening)) &&
-    audioStream;
+  const shouldShowWaveform = showcaseMode
+    ? // In showcase mode, show waveform based on inputState and inputMode
+      (inputMode === "voice" && inputState === "listening") ||
+      (inputMode === "conversation" && inputState === "listening")
+    : // In real mode, show waveform based on actual listening state and audio stream
+      ((inputMode === "voice" && isListening) ||
+        (inputMode === "conversation" && isListening)) &&
+      audioStream;
 
   // Determine if we should show full-width waveform (natural mode) or compact waveform (dictation mode)
   const isFullWidthWaveform = inputMode === "conversation";
@@ -871,7 +875,7 @@ export function VoiceTextInput({
           {isNaturalConversationEnabled && (
             <div
               className={cn(
-                "flex items-center justify-between px-3 py-2 sm:py-1.5 border-b",
+                "flex items-center justify-between px-3 py-2 sm:py-1 border-b",
                 getStateBackground(),
                 conversationState === "listening" && "animate-pulse"
               )}
@@ -918,21 +922,39 @@ export function VoiceTextInput({
                     getStateBackground()
                   )}
                 />
-                <WaveformVisualizer
-                  audioStream={audioStream}
-                  isActive={isListening}
-                  className="absolute inset-0"
-                  color={
-                    inputMode === "conversation"
-                      ? conversationState === "listening"
-                        ? "#6366f1"
-                        : "#9333ea"
-                      : "#3b82f6"
-                  }
-                  barCount={40}
-                  barWidth={2}
-                  barGap={3}
-                />
+                {showcaseMode && !audioStream ? (
+                  <StaticWaveform
+                    className="absolute inset-0 h-full"
+                    color={
+                      inputMode === "conversation"
+                        ? conversationState === "listening"
+                          ? "#6366f1"
+                          : "#9333ea"
+                        : "#3b82f6"
+                    }
+                    barCount={40}
+                    barWidth={2}
+                    barGap={3}
+                    pattern="active"
+                    style="full-width"
+                  />
+                ) : audioStream ? (
+                  <WaveformVisualizer
+                    audioStream={audioStream}
+                    isActive={isListening}
+                    className="absolute inset-0"
+                    color={
+                      inputMode === "conversation"
+                        ? conversationState === "listening"
+                          ? "#6366f1"
+                          : "#9333ea"
+                        : "#3b82f6"
+                    }
+                    barCount={40}
+                    barWidth={2}
+                    barGap={3}
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent" />
               </div>
             )}
@@ -945,15 +967,27 @@ export function VoiceTextInput({
                 role="img"
                 aria-label="Compact audio waveform showing voice input activity"
               >
-                <WaveformVisualizer
-                  audioStream={audioStream}
-                  isActive={isListening}
-                  className="w-full h-full"
-                  color="#3b82f6"
-                  barCount={12}
-                  barWidth={2}
-                  barGap={1}
-                />
+                {showcaseMode && !audioStream ? (
+                  <StaticWaveform
+                    className="w-full h-full"
+                    color="#3b82f6"
+                    barCount={12}
+                    barWidth={2}
+                    barGap={1}
+                    pattern="active"
+                    style="compact"
+                  />
+                ) : audioStream ? (
+                  <WaveformVisualizer
+                    audioStream={audioStream}
+                    isActive={isListening}
+                    className="w-full h-full"
+                    color="#3b82f6"
+                    barCount={12}
+                    barWidth={2}
+                    barGap={1}
+                  />
+                ) : null}
               </div>
             )}
 
@@ -970,7 +1004,7 @@ export function VoiceTextInput({
                 isNaturalConversationEnabled
                   ? "" // No placeholder in natural mode
                   : inputMode === "voice" && transcript
-                  ? "Processing speech..."
+                  ? "Processing..."
                   : placeholder
               }
               className={cn(
@@ -1053,7 +1087,8 @@ export function VoiceTextInput({
               {/* Voice/Text Toggle (only show if not in natural conversation mode) */}
               {!isNaturalConversationEnabled && (
                 <>
-                  {inputMode === "voice" && isListening ? (
+                  {inputMode === "voice" &&
+                  (showcaseMode ? inputState === "listening" : isListening) ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -1077,8 +1112,7 @@ export function VoiceTextInput({
                         <div className="text-center">
                           <p className="font-medium">Stop Voice Input</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Stop listening and process the speech you've
-                            recorded. Your speech will be converted to text.
+                            Stop listening
                           </p>
                         </div>
                       </TooltipContent>
@@ -1127,8 +1161,8 @@ export function VoiceTextInput({
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
                             {inputMode === "text"
-                              ? "Click and speak to dictate your message. Your speech will be converted to text in real-time."
-                              : "Switch back to keyboard typing mode for manual text input."}
+                              ? "Tap to speak"
+                              : "Switch to typing"}
                           </p>
                         </div>
                       </TooltipContent>
@@ -1213,9 +1247,7 @@ export function VoiceTextInput({
                             aria-hidden="true"
                           />
                         </div>
-                        <span className="font-medium">
-                          Listening... Speak now
-                        </span>
+                        <span className="font-medium">Listening...</span>
                       </div>
                     )}
                     {inputState === "processing" && (
@@ -1224,19 +1256,19 @@ export function VoiceTextInput({
                           className="w-3 h-3 animate-spin"
                           aria-hidden="true"
                         />
-                        <span>Processing speech...</span>
+                        <span>Processing...</span>
                       </div>
                     )}
                     {inputState === "success" && (
                       <div className="flex items-center gap-2 text-emerald-600">
                         <Volume2 className="w-3 h-3" aria-hidden="true" />
-                        <span>Voice captured successfully</span>
+                        <span>Voice captured</span>
                       </div>
                     )}
                     {inputState === "idle" && inputMode === "text" && (
                       <div className="flex items-center gap-2 text-slate-500">
                         <Keyboard className="w-3 h-3" aria-hidden="true" />
-                        <span>Ready to type or speak</span>
+                        <span>Ready</span>
                       </div>
                     )}
                     {error && (
@@ -1248,7 +1280,7 @@ export function VoiceTextInput({
                     {!isSupported && (
                       <div className="flex items-center gap-2 text-amber-600">
                         <MicOff className="w-3 h-3" aria-hidden="true" />
-                        <span>Speech recognition not supported</span>
+                        <span>Voice not supported</span>
                       </div>
                     )}
                   </>
@@ -1256,7 +1288,7 @@ export function VoiceTextInput({
                   // Static placeholder for server-side rendering
                   <div className="flex items-center gap-2 text-slate-500">
                     <Keyboard className="w-3 h-3" aria-hidden="true" />
-                    <span>Ready to type or speak</span>
+                    <span>Ready</span>
                   </div>
                 )}
               </div>
@@ -1269,8 +1301,7 @@ export function VoiceTextInput({
                     isVoiceResponsesEnabled ? "Turn off" : "Turn on"
                   } voice responses`}
                 >
-                  {isVoiceResponsesEnabled ? "Turn off" : "Turn on"} voice
-                  responses
+                  Voice responses: {isVoiceResponsesEnabled ? "On" : "Off"}
                 </button>
               </div>
             </div>

@@ -48,7 +48,7 @@ export function StaticVoiceInput({
   enableNaturalConversation = false,
   message = "",
   state = "idle",
-  error = null,
+  error,
   inputMode = "text",
   isNaturalConversationEnabled = false,
   showTranscriptInNaturalMode = false,
@@ -139,13 +139,13 @@ export function StaticVoiceInput({
   const getNaturalModeStatusText = () => {
     switch (state) {
       case "listening":
-        return "Listening... Speak naturally";
+        return "Listening...";
       case "processing":
-        return "Processing your message...";
+        return "Processing...";
       case "error":
         return "Conversation paused";
       default:
-        return "Natural conversation mode";
+        return "Conversation mode";
     }
   };
 
@@ -433,25 +433,25 @@ export function StaticVoiceInput({
                       <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
                       <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
                     </div>
-                    <span className="font-medium">Listening... Speak now</span>
+                    <span className="font-medium">Listening...</span>
                   </div>
                 )}
                 {state === "processing" && (
                   <div className="flex items-center gap-2 text-amber-600">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    <span>Processing speech...</span>
+                    <span>Processing...</span>
                   </div>
                 )}
                 {state === "success" && (
                   <div className="flex items-center gap-2 text-emerald-600">
                     <Volume2 className="w-3 h-3" />
-                    <span>Voice captured successfully</span>
+                    <span>Voice captured</span>
                   </div>
                 )}
                 {state === "idle" && inputMode === "text" && (
                   <div className="flex items-center gap-2 text-slate-500">
                     <Keyboard className="w-3 h-3" />
-                    <span>Ready to type or speak</span>
+                    <span>Ready</span>
                   </div>
                 )}
                 {error && (

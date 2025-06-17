@@ -11,7 +11,7 @@ export function ConversationStatesShowcase() {
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-semibold text-slate-900">
-        Component States
+        Basic Input States
       </h2>
 
       <div className="flex flex-col gap-4">
@@ -27,6 +27,9 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
+            defaultState="idle"
+            defaultInputMode="text"
+            showcaseMode
           />
         </ShowcaseCard>
 
@@ -41,13 +44,16 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
+            defaultState="idle"
+            defaultInputMode="text"
             defaultMessage="Hello, I'm typing a message"
+            showcaseMode
           />
         </ShowcaseCard>
 
         <ShowcaseCard
-          title="Voice Input Active"
-          description="User is speaking (dictation mode)"
+          title="Voice Recording State"
+          description="User is speaking - voice input active"
         >
           <VoiceTextInput
             placeholder="Speak now..."
@@ -56,9 +62,9 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="voice"
             defaultState="listening"
-            defaultMessage="I'm speaking into the microphone..."
+            defaultInputMode="voice"
+            showcaseMode
           />
         </ShowcaseCard>
 
@@ -74,23 +80,9 @@ export function ConversationStatesShowcase() {
             showSendButton
             enableNaturalConversation
             defaultState="processing"
+            defaultInputMode="voice"
             defaultMessage="Processing speech input..."
-          />
-        </ShowcaseCard>
-
-        <ShowcaseCard
-          title="Error State"
-          description="Error occurred during input"
-        >
-          <VoiceTextInput
-            placeholder="Type a message or tap the mic to speak..."
-            onSubmit={handleSubmit}
-            onConversationMessage={handleConversationMessage}
-            variant="chat"
-            showSendButton
-            enableNaturalConversation
-            defaultState="error"
-            defaultError="Microphone access denied"
+            showcaseMode
           />
         </ShowcaseCard>
 
@@ -106,7 +98,27 @@ export function ConversationStatesShowcase() {
             showSendButton
             enableNaturalConversation
             defaultState="success"
+            defaultInputMode="voice"
             defaultMessage="Voice captured successfully"
+            showcaseMode
+          />
+        </ShowcaseCard>
+
+        <ShowcaseCard
+          title="Error State"
+          description="Error occurred during input"
+        >
+          <VoiceTextInput
+            placeholder="Type a message or tap the mic to speak..."
+            onSubmit={handleSubmit}
+            onConversationMessage={handleConversationMessage}
+            variant="chat"
+            showSendButton
+            enableNaturalConversation
+            defaultState="error"
+            defaultInputMode="voice"
+            defaultError="Microphone access denied"
+            showcaseMode
           />
         </ShowcaseCard>
       </div>
@@ -117,8 +129,8 @@ export function ConversationStatesShowcase() {
 
       <div className="flex flex-col gap-4">
         <ShowcaseCard
-          title="Natural Mode - Inactive"
-          description="Natural conversation mode available but not active"
+          title="Natural Mode - Disabled"
+          description="Natural conversation mode not available - only basic voice input"
         >
           <VoiceTextInput
             placeholder="Type a message or tap the mic to speak..."
@@ -126,9 +138,10 @@ export function ConversationStatesShowcase() {
             onConversationMessage={handleConversationMessage}
             variant="chat"
             showSendButton
-            enableNaturalConversation
+            enableNaturalConversation={false}
+            defaultState="idle"
             defaultInputMode="text"
-            defaultIsNaturalConversationEnabled={false}
+            showcaseMode
           />
         </ShowcaseCard>
 
@@ -143,44 +156,10 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="conversation"
-            defaultIsNaturalConversationEnabled={true}
             defaultState="listening"
-          />
-        </ShowcaseCard>
-
-        <ShowcaseCard
-          title="Natural Mode - With Live Transcript"
-          description="Natural conversation with visible transcript"
-        >
-          <VoiceTextInput
-            placeholder=""
-            onSubmit={handleSubmit}
-            onConversationMessage={handleConversationMessage}
-            variant="chat"
-            showSendButton
-            enableNaturalConversation
             defaultInputMode="conversation"
             defaultIsNaturalConversationEnabled={true}
-            defaultState="listening"
-            defaultMessage="I'm speaking naturally and you can see the transcript..."
-          />
-        </ShowcaseCard>
-
-        <ShowcaseCard
-          title="Natural Mode - Processing"
-          description="Processing natural conversation input"
-        >
-          <VoiceTextInput
-            placeholder=""
-            onSubmit={handleSubmit}
-            onConversationMessage={handleConversationMessage}
-            variant="chat"
-            showSendButton
-            enableNaturalConversation
-            defaultInputMode="conversation"
-            defaultIsNaturalConversationEnabled={true}
-            defaultState="processing"
+            showcaseMode
           />
         </ShowcaseCard>
 
@@ -212,40 +191,41 @@ export function ConversationStatesShowcase() {
               variant="chat"
               showSendButton
               enableNaturalConversation
+              defaultState="listening"
               defaultInputMode="conversation"
               defaultIsNaturalConversationEnabled={true}
-              defaultState="listening"
+              showcaseMode
             />
           </div>
         </ShowcaseCard>
+      </div>
 
+      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
+        Input Mode Variations
+      </h2>
+
+      <div className="flex flex-col gap-4">
         <ShowcaseCard
-          title="Natural Mode - Error State"
-          description="Error in natural conversation mode"
+          title="Text Input Mode"
+          description="Standard text input with send button"
         >
           <VoiceTextInput
-            placeholder=""
+            placeholder="Type your message here..."
             onSubmit={handleSubmit}
             onConversationMessage={handleConversationMessage}
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="conversation"
-            defaultIsNaturalConversationEnabled={true}
-            defaultState="error"
-            defaultError="Speech recognition error: no speech detected"
+            defaultState="idle"
+            defaultInputMode="text"
+            defaultMessage="Example typed message"
+            showcaseMode
           />
         </ShowcaseCard>
-      </div>
 
-      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
-        Waveform Visualization States
-      </h2>
-
-      <div className="flex flex-col gap-4">
         <ShowcaseCard
-          title="Compact Waveform (Voice Mode)"
-          description="Compact waveform for dictation mode"
+          title="Voice Input Mode (Dictation)"
+          description="Voice dictation with compact waveform"
         >
           <VoiceTextInput
             placeholder="Speak now..."
@@ -254,15 +234,16 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="voice"
             defaultState="listening"
+            defaultInputMode="voice"
             defaultMessage="Dictating a message with compact waveform..."
+            showcaseMode
           />
         </ShowcaseCard>
 
         <ShowcaseCard
-          title="Full-Width Waveform (Natural Mode)"
-          description="Full-width waveform for natural conversation"
+          title="Conversation Mode"
+          description="Natural conversation with full-width interface"
         >
           <VoiceTextInput
             placeholder=""
@@ -271,21 +252,22 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
+            defaultState="listening"
             defaultInputMode="conversation"
             defaultIsNaturalConversationEnabled={true}
-            defaultState="listening"
+            showcaseMode
           />
         </ShowcaseCard>
       </div>
 
       <h2 className="text-2xl font-semibold text-slate-900 mt-8">
-        Status Bar Variations
+        Component Variants
       </h2>
 
       <div className="flex flex-col gap-4">
         <ShowcaseCard
-          title="Compact Status (Manual Mode)"
-          description="Compact status bar for manual input modes"
+          title="Chat Variant"
+          description="Chat interface variant with full features"
         >
           <VoiceTextInput
             placeholder="Type a message or speak..."
@@ -294,26 +276,32 @@ export function ConversationStatesShowcase() {
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="voice"
-            defaultState="listening"
-            defaultMessage="Voice input with compact status..."
+            defaultState="idle"
+            defaultInputMode="text"
+            showcaseMode
           />
         </ShowcaseCard>
+      </div>
 
+      <h2 className="text-2xl font-semibold text-slate-900 mt-8">
+        Special Features
+      </h2>
+
+      <div className="flex flex-col gap-4">
         <ShowcaseCard
-          title="Enhanced Status (Natural Mode)"
-          description="Enhanced status bar for natural conversation"
+          title="Custom Placeholder"
+          description="Component with custom placeholder text"
         >
           <VoiceTextInput
-            placeholder=""
+            placeholder="Ask me anything about voice technology..."
             onSubmit={handleSubmit}
             onConversationMessage={handleConversationMessage}
             variant="chat"
             showSendButton
             enableNaturalConversation
-            defaultInputMode="conversation"
-            defaultIsNaturalConversationEnabled={true}
-            defaultState="listening"
+            defaultState="idle"
+            defaultInputMode="text"
+            showcaseMode
           />
         </ShowcaseCard>
       </div>

@@ -14,11 +14,11 @@ import { MobileShowcase } from "@/components/mobile-showcase";
 
 export default function ShowcasePage() {
   const handleSubmit = (message: string, inputType: "voice" | "text") => {
-    console.log("Message submitted:", message, "via", inputType);
+    // Demo handlers - implement your own logic here
   };
 
   const handleConversationMessage = (message: string, isUser: boolean) => {
-    console.log(`${isUser ? "User" : "AI"} said:`, message);
+    // Demo handlers - implement your own logic here
   };
 
   return (
